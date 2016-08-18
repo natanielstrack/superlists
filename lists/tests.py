@@ -6,6 +6,8 @@ from django.template.loader import render_to_string
 from lists.views import home_page
 from lists.models import Item
 
+
+
 class HomePageTest(TestCase):
     """Does the root direct to the homepage?"""
 
@@ -30,13 +32,33 @@ class HomePageTest(TestCase):
 
         response = home_page(request)
 
-        self.assertIn('A new list item', response.content.decode())
+        self.assertEqual(Item.objects.count(), 1)
+        new_item = Item.objects.first()
+        self.assertEqual(new_item.text, 'A new list item')
 
-        expected_html = render_to_string('home.html',
-                            {'new_item_text': 'A new list item'
-                        })
 
-        self.assertEqual(response.content.decode(), expected_html)
+    def test_home_page_redirects_after_POST(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request.POST['item_text'] = 'A new list item'
+
+        response = home_page(request)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/')
+
+
+    def test_home_page_display_multiple_item(self):
+        Item.objects.create(text='itemey 1')
+        Item.objects.create(text='itemey 2')
+
+        request = HttpRequest()
+        response = home_page(request)
+
+        self.assertIn('itemey 1', response.content.decode())
+        self.assertIn('itemey 2', response.content.decode())
+
+
 
 class ItemModelTest(TestCase):
 
@@ -57,3 +79,8 @@ class ItemModelTest(TestCase):
         self.assertEqual(first_saved_item.text, 'First item (ever) list item')
         self.assertEqual(second_saved_item.text, 'Item the second')
 
+
+    def test_home_page_only_save_items_when_necessary(self):
+        request = HttpRequest()
+        response = home_page(request)
+        self.assertEqual(Item.objects.count(), 0)
