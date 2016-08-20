@@ -45,7 +45,7 @@ class HomePageTest(TestCase):
         response = home_page(request)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/')
+        self.assertEqual(response['location'], '/lists/the_only_list_in_the_world')
 
 
     def test_home_page_display_multiple_item(self):
