@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 
 from lists.models import Item
 
@@ -8,7 +8,11 @@ def home_page(request):
     if request.method == 'POST':    
         new_item_text = request.POST['item_text']
         Item.objects.create(text=new_item_text)
-        return redirect('/lists/the_only_list_in_the_world')
+        return redirect('/lists/the-only-list-in-the-world/')
 
+    return render(request, 'home.html')
+
+
+def view_lists(request):
     items = Item.objects.all()
-    return render(request, 'home.html', {'items':items})
+    return render(request, 'list.html', {'items':items})
