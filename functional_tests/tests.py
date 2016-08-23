@@ -1,8 +1,24 @@
+import sys
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 class NewVisitorTest(StaticLiveServerTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        for arg in sys.argv:
+            if 'liveserver' in arg:
+                cls.server_url = 'http://' + arg.split('=')[1]
+                return
+        super(NewVisitorTest, cls).setUpClass()
+        cls.server_url = cls.live_server_url
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.server_url == cls.live_server_url:
+            super(NewVisitorTest, cls).tearDownClass()    
+
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -19,7 +35,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def test_can_start_a_list_and_retrieve_later(self):
         # Edith has heard about a cool new online to-do app, so she goes to check out its homepage 
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
 
         # Edith notes that the page title and header mention to-do lists
         """
@@ -68,7 +84,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.browser = webdriver.Chrome()
 
         # Francis visit the homepage, there's no sign of Edith's list
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
 
         self.assertNotIn('buy peacock feathers', self.browser.page_source)
         self.assertNotIn('Use peacock feathers to make a fly', self.browser.page_source)
@@ -95,7 +111,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def test_layout_and_styling(self):
         # Edith goes to the homepage
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
         self.browser.set_window_size(1024, 768)
 
         # She notes that the box is nicely centered
