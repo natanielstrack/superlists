@@ -2,3 +2,5 @@ db.sqlite3
 superlists/*.pyc
 lists/*.pyc
 *.pyc
+python.sublime-workspace
+python.sublime-project
