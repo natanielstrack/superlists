@@ -26,4 +26,3 @@ Assuming user account at /home/ubuntu
         ├── source
         ├── static
         └── virtualenv
-
