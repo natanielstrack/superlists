@@ -20,9 +20,7 @@
     <script src="qunit.js"></script>
     <script>
 function setupModule(){
-    $('input').keypress( function(){
-        $('.has-error').hide();
-    });
+    init();
 }
 
 QUnit.module('tests', {beforeEach:setupModule});
